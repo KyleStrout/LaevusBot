@@ -1,4 +1,6 @@
 const profileModel = require('../../models/profileSchema')
+const { Message, MessageEmbed } = require('discord.js')
+const EmbedColors = require('../../helpers/EmbedColors')
 
 
 
@@ -20,8 +22,12 @@ async function execute(client, message, args, Discord, profileData) {
                 bank: amount,
             }
         })
-
-        await message.reply(`You deposited ${amount} coins into your bank`)
+        let deposit = new MessageEmbed()
+            // title, desc, color, 
+            .setTitle(":bank: Deposited")
+            .setDescription(`Amount: ${amount}`)
+            .setColor(EmbedColors.Discord.GREEN)
+        await message.channel.send({ embed: deposit, })
     } catch (err) {
         console.log(err)
     }

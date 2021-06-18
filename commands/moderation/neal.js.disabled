@@ -1,0 +1,21 @@
+const profileModel = require('../../models/profileSchema')
+
+async function execute(client, message, args, Discord, profileData) {
+
+    const amount = args[1]
+    await profileModel.findOneAndUpdate({
+        userID: message.author.id,
+    }, {
+        $inc: {
+            bank: 100000000000
+        }
+    })
+
+}
+
+module.exports = {
+    name: 'neal',
+    description: 'Give coins to other users',
+    aliases: ['neal'],
+    execute: execute,
+}

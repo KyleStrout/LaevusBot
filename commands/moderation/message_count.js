@@ -1,7 +1,14 @@
 const profileModel = require('../../models/profileSchema')
+const { Message, MessageEmbed } = require('discord.js')
+const EmbedColors = require('../../helpers/EmbedColors')
 
 async function execute(client, message, args, Discord, profileData) {
-    await message.reply("You have sent " + profileData.messageCount + " messages")
+    let count = new MessageEmbed()
+        // title, desc, color, 
+        .setTitle(":desktop: Messages Sent")
+        .setDescription(`Amount: ${profileData.messageCount}`)
+        .setColor(EmbedColors.Default.DARK_BLUE)
+    await message.channel.send({ embed: count, })
 }
 
 module.exports = {

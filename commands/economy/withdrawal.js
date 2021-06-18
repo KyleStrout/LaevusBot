@@ -1,4 +1,6 @@
 const profileModel = require('../../models/profileSchema')
+const { Message, MessageEmbed } = require('discord.js')
+const EmbedColors = require('../../helpers/EmbedColors')
 
 
 
@@ -20,8 +22,12 @@ async function execute(client, message, args, Discord, profileData) {
                 bank: -amount,
             }
         })
-
-        await message.reply(`You withdrew ${amount} coins out of your bank`)
+        let withdraw = new MessageEmbed()
+            // title, desc, color, 
+            .setTitle(":money_with_wings: Withdrawal")
+            .setDescription(`Amount: ${amount}`)
+            .setColor(EmbedColors.Discord.GREEN)
+        await message.channel.send({ embed: withdraw, })
     } catch (err) {
         console.log(err)
     }
@@ -30,6 +36,6 @@ async function execute(client, message, args, Discord, profileData) {
 module.exports = {
     name: 'withdrawal',
     description: 'Withdraw coins from your bank',
-    aliases: ['withdrawal', 'wd'],
+    aliases: ['withdraw', 'wd'],
     execute: execute,
 }

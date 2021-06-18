@@ -1,20 +1,17 @@
-const { Message } = require('discord.js')
+const { Message, MessageEmbed } = require('discord.js')
 const fetch = require('node-fetch')
 const triviaModel = require('../../models/triviaSchema')
-
-/** 
- * @param {Message} message The user message 
- * @param {Array} args The command arguments
- */
+const EmbedColors = require('../../helpers/EmbedColors')
 
 
-async function get_Trivia() {
 
-
-}
-
-// update question in db, get trivia from api
-
+/**
+ * 
+ * @param {} client
+ * @param {Message} message
+ * @param {} args
+ * @param {} Discord
+ * */
 async function execute(client, message, args, Discord) {
     let generatedQuestion = "yo"
     let generatedAnswer = ""
@@ -30,7 +27,13 @@ async function execute(client, message, args, Discord) {
             response.json().then(async (json) => {
                 generatedQuestion = json['text']
                 generatedAnswer = json['number']
-                message.channel.send(generatedQuestion)
+                let generatedQuestionEmbed = new MessageEmbed()
+                    // title, desc, color, 
+                    .setTitle(":question: New Question")
+                    .setDescription(`${generatedQuestion}`)
+                    .setColor(EmbedColors.Default.BLUE)
+                // await message.channel.send({ embeds: [generatedQuestionEmbed] })
+                await message.channel.send({ embed: generatedQuestionEmbed, })
                 //message.channel.send(generatedAnswer)
                 let triviaData;
                 try {

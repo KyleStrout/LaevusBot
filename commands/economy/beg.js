@@ -28,5 +28,6 @@ module.exports = {
     name: 'beg',
     description: 'User wallet balance and bank balance',
     aliases: [],
+    cooldown: 180,
     execute: execute,
 }
