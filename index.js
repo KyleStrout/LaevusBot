@@ -1,7 +1,7 @@
 const fs = require('fs');
 const Discord = require('discord.js');
 const { Intents, MessageEmbed } = require('discord.js');
-const { prefix, token } = require('./config.json');
+const { prefix } = require('./config.json');
 const mongoose = require('mongoose');
 require('dotenv').config();
 
@@ -70,4 +70,4 @@ mongoose.connect(process.env.MONGODB_SRV, {
         console.log(err)
     })
 
-client.login(token);
+client.login(process.env.TOKEN);
