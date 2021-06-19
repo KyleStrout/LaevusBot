@@ -1,7 +1,7 @@
 Discord bot using Discord.js and MongoDB
 
-20+ commands
-Database with user profile models + more
+- 20+ commands
+- Database with user profile models + more
 
 Features:
 
