@@ -15,7 +15,7 @@ module.exports = {
             .setDescription('Here\'s a list of commands')
 
         commands.map(cmd => {
-            helpEmbed.addField(cmd)
+            helpEmbed.addField(cmd.name)
         })
 
         if (!args.length) {

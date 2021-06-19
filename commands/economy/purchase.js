@@ -105,63 +105,6 @@ async function execute(client, message, args, Discord, profileData) {
             .setColor(EmbedColors.Default.DARK_RED)
         await message.channel.send({ embed: response, })
     }
-
-    // if (roleName == 'knight') {
-    //     let newRole = message.member.guild.roles.cache.find(role => role.name === 'Knight (2000)')
-    //     await message.member.roles.add(newRole)
-
-    // }
-    // else if (roleName == 'samurai') {
-    //     let newRole = message.member.guild.roles.cache.find(role => role.name === 'Samurai (2500)')
-    //     await message.member.roles.add(newRole)
-    // }
-    // else if (roleName == 'baron') {
-    //     let newRole = message.member.guild.roles.cache.find(role => role.name === 'Baron (3000)')
-    //     await message.member.roles.add(newRole)
-    // }
-    // else if (roleName == 'shogun') {
-    //     let newRole = message.member.guild.roles.cache.find(role => role.name === 'Shogun (4000)')
-    //     await message.member.roles.add(newRole)
-    // }
-    // else if (roleName == 'consul') {
-    //     let newRole = message.member.guild.roles.cache.find(role => role.name === 'Consul (5000)')
-    //     await message.member.roles.add(newRole)
-    // }
-    // else if (roleName == 'chieftain') {
-    //     let newRole = message.member.guild.roles.cache.find(role => role.name === 'Chieftain (6000)')
-    //     await message.member.roles.add(newRole)
-    // }
-    // else if (roleName == 'emperor') {
-    //     let newRole = message.member.guild.roles.cache.find(role => role.name === 'Emperor (7000)')
-    //     await message.member.roles.add(newRole)
-    // }
-    // else if (roleName == 'council member') {
-    //     let newRole = message.member.guild.roles.cache.find(role => role.name === 'Council Member (8000)')
-    //     await message.member.roles.add(newRole)
-    // }
-    // else if (roleName == 'tsar') {
-    //     let newRole = message.member.guild.roles.cache.find(role => role.name === 'Tsar (9000)')
-    //     await message.member.roles.add(newRole)
-    // }
-    // else if (roleName == 'immortal guard') {
-    //     let newRole = message.member.guild.roles.cache.find(role => role.name === 'Immortal Guard (10000)')
-    //     await message.member.roles.add(newRole)
-    // }
-    // else if (roleName == 'grandmaster') {
-    //     let newRole = message.member.guild.roles.cache.find(role => role.name === 'Grandmaster (50000)')
-    //     await message.member.roles.add(newRole)
-    // }
-    // else if (roleName == 'legend') {
-    //     let newRole = message.member.guild.roles.cache.find(role => role.name === 'Legend (75000)')
-    //     await message.member.roles.add(newRole)
-    // }
-    // else if (roleName == 'godlike') {
-    //     let newRole = message.member.guild.roles.cache.find(role => role.name === 'GODLIKE (100000)')
-    //     await message.member.roles.add(newRole)
-    // }
-
-
-
 }
 
 

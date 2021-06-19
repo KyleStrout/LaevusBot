@@ -9,7 +9,7 @@ async function execute(client, message, args, Discord) {
     userResponse = await triviaModel.findOne({ answer: userAnswer })
     if (userResponse) {
         if (userResponse.state == "ready") {
-            const randomNumber = Math.floor(Math.random() * 500) + 100
+            const randomNumber = Math.floor(Math.random() * 800) + 200
             let response = new MessageEmbed()
                 // title, desc, color, 
                 .setTitle(":white_check_mark: Correct")
@@ -26,7 +26,7 @@ async function execute(client, message, args, Discord) {
                 userID: message.author.id
             }, {
                 $inc: {
-                    bank: randomNumber
+                    coins: randomNumber
                 }
             })
         }

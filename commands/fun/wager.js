@@ -14,6 +14,14 @@ async function execute(client, message, args, Discord, profileData) {
     let botRandomNumber = Math.floor(Math.random() * (max - min)) + min
     let userRandomNumber = Math.floor(Math.random() * (max - min)) + min
 
+    if (amount % 1 != 0 || amount <= 0) {
+        let response = new MessageEmbed()
+            // title, desc, color, 
+            .setTitle(":x: Invalid wager")
+            .setDescription(`Please enter a whole number, type !wager <wager>`)
+            .setColor(EmbedColors.Default.DARK_RED)
+        return await message.channel.send({ embed: response, })
+    }
 
     try {
         if (profileData.coins < amount) {
