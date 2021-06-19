@@ -7,7 +7,7 @@ Features:
 
 - Economy System
   - Bank and wallet
-  - Ways to earn coins (trivia, gambling, lottery, receiving coins from other users)
+  - Ways to earn coins (trivia, gambling, lottery, sending messages in the guild, receiving coins from other users)
   - Ways to spend coins (shop, purchase roles)
   - Withdraw and deposit
   
