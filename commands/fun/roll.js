@@ -1,4 +1,5 @@
-const { Message } = require('discord.js')
+const { Message, MessageEmbed } = require('discord.js')
+const EmbedColors = require('../../helpers/EmbedColors')
 
 /** 
  * Handle the roll command
@@ -10,20 +11,27 @@ async function execute(client, message, args, Discord) {
     let min = 0
     let botRandomNumber = Math.floor(Math.random() * (max - min)) + min
     let userRandomNumber = Math.floor(Math.random() * (max - min)) + min
-    let didUserWin = false
-    let replyMessage = ''
 
-    replyMessage = '\nYou rolled a ' + userRandomNumber + '!\n'
-    replyMessage += 'The bot rolled a ' + botRandomNumber + '!\n'
-    await message.reply(replyMessage)
 
-    if (botRandomNumber > userRandomNumber) {
+    if (botRandomNumber < userRandomNumber) {
+        let roll = new MessageEmbed()
+            // title, desc, color, 
+            .setTitle(":game_die: You win!")
+            .setDescription(`${message.author.username}: ${userRandomNumber}\nLaevusBot: ${botRandomNumber}`)
+            .setColor(EmbedColors.Default.GREEN)
+        await message.channel.send({ embed: roll, })
         await message.react("<LaevusPog:806694928092495913>")
-        await message.channel.send('Congratulations!')
     }
     else {
-        await message.channel.send("You lose!")
+        let roll = new MessageEmbed()
+            // title, desc, color, 
+            .setTitle(":game_die: You lose!")
+            .setDescription(`${message.author.username}: ${userRandomNumber}\nBot: ${botRandomNumber}`)
+            .setColor(EmbedColors.Default.DARK_RED)
+        await message.channel.send({ embed: roll, })
     }
+
+
 
 
 

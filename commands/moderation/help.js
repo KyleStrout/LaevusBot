@@ -10,6 +10,14 @@ module.exports = {
         const data = [];
         const { commands } = message.client;
 
+        let helpEmbed = new MessageEmbed()
+            .setTitle(":book: Help")
+            .setDescription('Here\'s a list of commands')
+
+        commands.map(cmd => {
+            helpEmbed.addField(cmd.name)
+        })
+
         if (!args.length) {
             data.push('Here\'s a list of all my commands:');
             data.push(commands.map(command => command.name).join(', '));

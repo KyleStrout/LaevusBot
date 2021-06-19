@@ -1,5 +1,7 @@
 const triviaModel = require('../../models/triviaSchema')
 const profileModel = require('../../models/profileSchema')
+const { Message, MessageEmbed } = require('discord.js')
+const EmbedColors = require('../../helpers/EmbedColors')
 
 async function execute(client, message, args, Discord) {
     userAnswer = args[0]
@@ -7,7 +9,13 @@ async function execute(client, message, args, Discord) {
     userResponse = await triviaModel.findOne({ answer: userAnswer })
     if (userResponse) {
         if (userResponse.state == "ready") {
-            await message.reply("Congrats you got it right")
+            const randomNumber = Math.floor(Math.random() * 800) + 200
+            let response = new MessageEmbed()
+                // title, desc, color, 
+                .setTitle(":white_check_mark: Correct")
+                .setDescription(`Coins Earned: ${randomNumber}`)
+                .setColor(EmbedColors.Discord.GREEN)
+            await message.channel.send({ embed: response, })
             // update to answered
             await triviaModel.findOneAndUpdate({
                 id: 1
@@ -18,17 +26,27 @@ async function execute(client, message, args, Discord) {
                 userID: message.author.id
             }, {
                 $inc: {
-                    bank: 250
+                    coins: randomNumber
                 }
             })
         }
         else {
-            await message.reply("Someone already answered that, type !trivia for a new question")
+            let response = new MessageEmbed()
+                // title, desc, color, 
+                .setTitle(":x: Incorrect")
+                .setDescription(`Someone already answered that, type !trivia for a new question`)
+                .setColor(EmbedColors.Default.DARK_RED)
+            await message.channel.send({ embed: response, })
         }
 
     }
     else {
-        await message.reply("Sorry that's not correct")
+        let response = new MessageEmbed()
+            // title, desc, color, 
+            .setTitle(":x: Incorrect")
+            .setDescription("Sorry that's not correct")
+            .setColor(EmbedColors.Default.DARK_RED)
+        await message.channel.send({ embed: response, })
     }
 
 }
