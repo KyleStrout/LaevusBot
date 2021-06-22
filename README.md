@@ -1,6 +1,6 @@
 Discord bot using Discord.js and MongoDB
 
-- 20+ commands
+- 20+ slash commands
 - Database with user profile models + more
 
 Features:
@@ -16,4 +16,5 @@ Features:
 - Server info
 - Help/commands with DM from bot
 - Most bot replies are embeds
+- Embeds
 
