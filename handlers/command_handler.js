@@ -1,5 +1,5 @@
 const fs = require('fs')
-module.exports = (client, Discord) => {
+module.exports = async (client, Discord) => {
     // Get folders
     const commandFolders = fs.readdirSync('./commands');
     const command_files = fs.readdirSync('./commands/').filter(file => file.endsWith('.js'));
@@ -14,6 +14,9 @@ module.exports = (client, Discord) => {
             const command = require(`../commands/${folder}/${file}`);
             if (command.name) {
                 client.commands.set(command.name, command)
+            }
+            else if (command.definition) {
+                client.commands.set(file.replace('.js', ''), command)
             }
             else {
                 continue

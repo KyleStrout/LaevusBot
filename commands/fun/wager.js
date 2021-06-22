@@ -1,35 +1,43 @@
-const { Message, MessageEmbed } = require('discord.js')
 const EmbedColors = require('../../helpers/EmbedColors')
 const profileModel = require('../../models/profileSchema')
+const { CommandInteraction, Message, MessageEmbed, Client } = require('discord.js');
+const CommandTypes = require('../../helpers/CommandTypes');
 
-/** 
- * Handle the roll command
- * @param {Message} message The user message 
- * @param {Array} args The command arguments
- */
-async function execute(client, message, args, Discord, profileData) {
-    const amount = args[0]
+/**
+* Handle the command
+* @param {CommandInteraction} interaction
+*/
+const execute = async (interaction) => {
+    const amount = interaction.options.first().value
     let max = 100
     let min = 0
     let botRandomNumber = Math.floor(Math.random() * (max - min)) + min
     let userRandomNumber = Math.floor(Math.random() * (max - min)) + min
+    let profileData = await profileModel.findOne({ userID: interaction.user.id })
 
     if (amount % 1 != 0 || amount <= 0) {
         let response = new MessageEmbed()
             // title, desc, color, 
             .setTitle(":x: Invalid wager")
-            .setDescription(`Please enter a whole number, type !wager <wager>`)
+            .setDescription(`Please enter a whole number`)
             .setColor(EmbedColors.Default.DARK_RED)
-        return await message.channel.send({ embed: response, })
+        await interaction.reply({ embeds: [response] })
+        return
     }
 
     try {
         if (profileData.coins < amount) {
-            return await message.reply("You dont have that amount of coins in your wallet to wager.")
+            let response = new MessageEmbed()
+                // title, desc, color, 
+                .setTitle(":x: Error")
+                .setDescription(`You dont have that amount of coins in your wallet to wager.`)
+                .setColor(EmbedColors.Default.DARK_RED)
+            await interaction.reply({ embed: response, })
+            return
         }
         if (userRandomNumber > botRandomNumber) {
             const response = await profileModel.findOneAndUpdate({
-                userID: message.author.id,
+                userID: interaction.user.id,
             }, {
                 $inc: {
                     coins: amount,
@@ -38,14 +46,13 @@ async function execute(client, message, args, Discord, profileData) {
             let roll = new MessageEmbed()
                 // title, desc, color, 
                 .setTitle(":game_die: You win!")
-                .setDescription(`${message.author.username}: ${userRandomNumber}\nLaevusBot: ${botRandomNumber}\nEarnings: ${amount}`)
+                .setDescription(`**${interaction.user.username}:** ${userRandomNumber}\n**LaevusBot:** ${botRandomNumber}\n**Earnings:** ${amount}`)
                 .setColor(EmbedColors.Default.GREEN)
-            await message.channel.send({ embed: roll, })
-            await message.react("<LaevusPog:806694928092495913>")
+            await interaction.reply({ embeds: [roll] })
         }
         else {
             const response = await profileModel.findOneAndUpdate({
-                userID: message.author.id,
+                userID: interaction.user.id,
             }, {
                 $inc: {
                     coins: -amount,
@@ -54,24 +61,34 @@ async function execute(client, message, args, Discord, profileData) {
             let roll = new MessageEmbed()
                 // title, desc, color, 
                 .setTitle(":game_die: You lose!")
-                .setDescription(`${message.author.username}: ${userRandomNumber}\nLaevusBot: ${botRandomNumber}\nLosses: ${amount}`)
+                .setDescription(`**${interaction.user.username}:** ${userRandomNumber}\n**LaevusBot:** ${botRandomNumber}\n**Losses:** ${amount}`)
                 .setColor(EmbedColors.Default.DARK_RED)
-            await message.channel.send({ embed: roll, })
+            await interaction.reply({ embeds: [roll] })
         }
     } catch (err) {
         console.log(err)
     }
 
 
-
-
-
 }
 
 module.exports = {
     name: 'wager',
-    description: 'Roll a random number against the bot and wager your coins (!roll <wager>)',
-    aliases: ['gamble', 'gamba'],
-    args: true,
-    execute: execute,
+    description: 'Roll against the bot to win coins',
+    definition: {
+        name: 'wager',
+        description: 'Roll against the bot to win coins',
+        options: [
+            {
+                name: 'amount',
+                description: 'Number of coins to wager',
+                type: CommandTypes.INTEGER,
+                required: true
+            }
+        ]
+    },
+    execute
 };
+
+
+

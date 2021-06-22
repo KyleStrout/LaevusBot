@@ -1,32 +1,49 @@
-const profileModel = require('../../models/profileSchema')
-const { Message, MessageEmbed } = require('discord.js')
+const { CommandInteraction, Message, MessageEmbed, Client } = require('discord.js');
 const EmbedColors = require('../../helpers/EmbedColors')
+const CommandTypes = require('../../helpers/CommandTypes')
+const profileModel = require('../../models/profileSchema')
 
-async function execute(client, message, args, Discord, profileData) {
-    if (!args.length) {
-        return await message.reply('You need to mention a user to give them coins')
-    }
-    const amount = args[1]
-    const target = message.mentions.users.first()
-    if (!target) {
-        return await message.reply('That user does not exist')
-    }
+/**
+* Handle the command
+* @param {CommandInteraction} interaction
+*/
+const execute = async (interaction) => {
+    let profileData = await profileModel.findOne({ userID: interaction.user.id })
 
-    if (amount % 1 || amount <= 0) {
-        return await message.reply('Amount must be a whole number')
+    const amount = interaction.options.get('amount').value
+    const target = interaction.options.get('user').user
+    if (amount % 1 != 0 || amount <= 0) {
+        let failure = new MessageEmbed()
+            // title, desc, color, 
+            .setTitle(":x: Failure!")
+            .setDescription(`You cant send a negative amount of coins`)
+            .setColor(EmbedColors.Discord.RED)
+        await interaction.reply({ embeds: [failure], ephemeral: true })
+        return
     }
-
     if (amount > profileData.bank) {
-        return await message.reply("You don't have that amount in your bank to send")
+        await interaction.reply({
+            embeds: [
+                new MessageEmbed()
+                    .setTitle(':x: Failure')
+                    .setDescription(`You don't have that amount in your bank to send`)
+                    .setColor(EmbedColors.Discord.RED)
+            ], ephemeral: true
+        })
+        return
+    }
+
+    if (interaction.user.id === target.id) {
+        let failure = new MessageEmbed()
+            // title, desc, color, 
+            .setTitle(":x: Failure!")
+            .setDescription(`Can't give yourself money silly!`)
+            .setColor(EmbedColors.Discord.RED)
+        await interaction.reply({ embeds: [failure], ephemeral: true })
+        return
     }
 
     try {
-        const targetData = await profileModel.findOne({
-            userID: target.id
-        })
-        if (!targetData) {
-            return await message.reply('This user does not exist in the db')
-        }
         await profileModel.findOneAndUpdate({
             userID: target.id,
         }, {
@@ -35,31 +52,46 @@ async function execute(client, message, args, Discord, profileData) {
             }
         })
         await profileModel.findOneAndUpdate({
-            userID: message.author.id,
+            userID: interaction.user.id,
         }, {
             $inc: {
                 bank: -amount
             }
         })
+
         let response = new MessageEmbed()
             // title, desc, color, 
             .setTitle(":white_check_mark: Transfer Complete")
             .setDescription(`You sent ${target} ${amount}`)
             .setColor(EmbedColors.Discord.GREEN)
-        await message.channel.send({ embed: response, })
+        await interaction.reply({ embeds: [response] })
+        return
+
     } catch (err) {
         console.log(err)
     }
-    const updateTarget = await profileModel.findOneAndUpdate({
-        userID: target.id
-    })
-
 }
-
 
 module.exports = {
     name: 'give',
-    description: 'Give coins to other users',
-    aliases: ['donate', 'send'],
-    execute: execute,
-}
+    description: 'Give someone some money',
+    definition: {
+        name: 'give',
+        description: 'Give someone some money',
+        options: [
+            {
+                name: 'user',
+                description: 'The User you want to give money to',
+                type: CommandTypes.USER,
+                required: true
+            },
+            {
+                name: 'amount',
+                description: 'The amount you want to give',
+                type: CommandTypes.INTEGER,
+                required: true
+            }
+        ]
+    },
+    execute
+};

@@ -41,5 +41,6 @@ module.exports = {
     name: 'roll',
     description: 'Ping!',
     aliases: ['turkey'],
+    args: true,
     execute: execute,
 };

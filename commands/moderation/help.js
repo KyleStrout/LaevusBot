@@ -1,52 +1,44 @@
 const { prefix } = require('../../config.json');
-const { MessageEmbed } = require('discord.js')
+const { CommandInteraction, Message, MessageEmbed, Client } = require('discord.js');
+const EmbedColors = require('../../helpers/EmbedColors')
+const fs = require('fs')
+
+/**
+ * Handle the command
+ * @param {CommandInteraction} interaction
+ */
+async function execute(interaction) {
+    let helpEmbed = new MessageEmbed()
+        .setTitle(":book: Help")
+        .setDescription(
+            "> Here's a list of all my commands and what they do." +
+            "\n > **Note**: you can also do `/` to autocomplete discord commands."
+        )
+        .setColor(EmbedColors.Discord.YELLOW)
+
+    const commandFolders = fs.readdirSync('./commands');
+    commandFolders.forEach(folder => {
+        const commandFiles = fs.readdirSync(`./commands/${folder}`).filter(file => file.endsWith('.js'));
+        commandFiles.forEach(file => {
+            const command = require(`../../commands/${folder}/${file}`);
+            if (command.definition) {
+                helpEmbed.addField(`/${command.definition.name}`, command.definition.description)
+            }
+        })
+
+    })
+
+    await interaction.reply({ embeds: [helpEmbed], ephemeral: true })
+
+}
 
 module.exports = {
     name: 'help',
-    description: 'List all of my commands or info about a specific command.',
-    aliases: ['commands', 'info'],
-    usage: '[command name]',
-    execute(client, message, args, Discord) {
-        const data = [];
-        const { commands } = message.client;
-
-        let helpEmbed = new MessageEmbed()
-            .setTitle(":book: Help")
-            .setDescription('Here\'s a list of commands')
-
-        commands.map(cmd => {
-            helpEmbed.addField(cmd.name)
-        })
-
-        if (!args.length) {
-            data.push('Here\'s a list of all my commands:');
-            data.push(commands.map(command => command.name).join(', '));
-            data.push(`\nYou can send \`${prefix}help [command name]\` to get info on a specific command!`);
-
-            return message.author.send(data, { split: true })
-                .then(() => {
-                    if (message.channel.type === 'dm') return;
-                    message.reply('I\'ve sent you a DM with all my commands!');
-                })
-                .catch(error => {
-                    console.error(`Could not send help DM to ${message.author.tag}.\n`, error);
-                    message.reply('it seems like I can\'t DM you! Do you have DMs disabled?');
-                });
-        }
-
-        const name = args[0].toLowerCase();
-        const command = commands.get(name) || commands.find(c => c.aliases && c.aliases.includes(name));
-
-        if (!command) {
-            return message.reply('that\'s not a valid command!');
-        }
-
-        data.push(`**Name:** ${command.name}`);
-
-        if (command.aliases) data.push(`**Aliases:** ${command.aliases.join(', ')}`);
-        if (command.description) data.push(`**Description:** ${command.description}`);
-        if (command.usage) data.push(`**Usage:** ${prefix}${command.name} ${command.usage}`);
-
-        message.channel.send(data, { split: true });
+    description: 'List all of my commands',
+    definition: {
+        name: 'help',
+        description: 'List all of my commands',
+        options: [],
     },
+    execute
 };

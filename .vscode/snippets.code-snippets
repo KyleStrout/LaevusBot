@@ -1,0 +1,54 @@
+{
+	// Place your LaevusBot workspace snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and 
+	// description. Add comma separated ids of the languages where the snippet is applicable in the scope field. If scope 
+	// is left empty or omitted, the snippet gets applied to all languages. The prefix is what is 
+	// used to trigger the snippet and the body will be expanded and inserted. Possible variables are: 
+	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. 
+	// Placeholders with the same ids are connected.
+	// Example:
+	"New interaction": {
+		"scope": "javascript,typescript",
+		"prefix": "newInteraction",
+		"body": [
+			"const { CommandInteraction, Message, MessageEmbed, Client } = require('discord.js');",
+			"const EmbedColors = require('../../helpers/EmbedColors')\n",
+			"/**",
+			"* Handle the command",
+			"* @param {CommandInteraction} interaction",
+			"*/",
+			"const execute = async (interaction) => {",
+			"\t$0",
+			"\tawait interaction.reply({",
+			"\t\tembeds: [",
+			"\t\t\t{",
+			"\t\t\t\ttitle: 'Not imeplmented',",
+			"\t\t\t\tdescription: 'Not implemented'",
+			"\t\t\t}",
+			"\t\t]",
+			"\t})\n",
+			"}\n",
+			"module.exports = {",
+			"\tname: '$1',",
+			"\tdescription: '$2',",
+			"\tdefinition: {",
+			"\t\tname: '$1',",
+			"\t\tdescription: '$2'",
+			"\t},",
+			"\texecute",
+			"};",
+		],
+		"description": "Create a new discord interaction"
+	},
+	"New Option": {
+		"scope": "javascript,typescript",
+		"prefix": "newOption",
+		"body": [
+			"{",
+			"\tname: '$1',",
+			"\tdescription: '$2'",
+			"\ttype: $0",
+			"},",
+		],
+		"description": "Create a new interaction option"
+	}
+}

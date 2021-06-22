@@ -1,35 +1,50 @@
-const { Message, MessageEmbed } = require('discord.js')
+const { CommandInteraction, Message, MessageEmbed, Client } = require('discord.js');
 const EmbedColors = require('../../helpers/EmbedColors')
+const CommandTypes = require('../../helpers/CommandTypes')
 const profileModel = require('../../models/profileSchema')
 const fetch = require('node-fetch')
 
+/**
+* Handle the command
+* @param {CommandInteraction} interaction
+*/
+const execute = async (interaction) => {
+    let profileData = await profileModel.findOne({ userID: interaction.user.id })
+    const wager = interaction.options.get('wager').value
+    const side = interaction.options.get('side').value
 
+    let isHeads = String(side).includes('HEADS')
+    if (isHeads) {
 
-/** 
- * Handle the roll command
- * @param {Message} message The user message 
- * @param {Array} args The command arguments
- */
-async function execute(client, message, args, Discord, profileData) {
-    const amount = args[0]
-    const outcome = args[1].toLowerCase()
-
-    if (outcome != 'tails' && outcome != 'heads') {
-        let response = new MessageEmbed()
-            // title, desc, color, 
-            .setTitle(":x: Invalid choice")
-            .setDescription(`Please enter !coinflip <wager> <heads/tails>`)
-            .setColor(EmbedColors.Default.DARK_RED)
-        return await message.channel.send({ embed: response, })
     }
+    // if (outcome != 'tails' && outcome != 'heads') {
+    //     let response = new MessageEmbed()
+    //         // title, desc, color, 
+    //         .setTitle(":x: Invalid choice")
+    //         .setDescription(`Please enter !coinflip <wager> <heads/tails>`)
+    //         .setColor(EmbedColors.Default.DARK_RED)
+    //     return await message.channel.send({ embed: response, })
+    // }
 
-    else if (amount % 1 != 0 || amount <= 0) {
-        let response = new MessageEmbed()
+    if (wager % 1 != 0 || wager <= 0) {
+        let failure = new MessageEmbed()
             // title, desc, color, 
-            .setTitle(":x: Invalid wager")
-            .setDescription(`Please enter !coinflip <wager> <heads/tails>`)
-            .setColor(EmbedColors.Default.DARK_RED)
-        return await message.channel.send({ embed: response, })
+            .setTitle(":x: Failure!")
+            .setDescription(`You cant wager a negative amount of coins`)
+            .setColor(EmbedColors.Discord.RED)
+        await interaction.reply({ embeds: [failure], ephemeral: true })
+        return
+    }
+    if (wager > profileData.bank) {
+        await interaction.reply({
+            embeds: [
+                new MessageEmbed()
+                    .setTitle(':x: Failure')
+                    .setDescription(`You don't have that amount in your bank to wager`)
+                    .setColor(EmbedColors.Discord.RED)
+            ], ephemeral: true
+        })
+        return
     }
 
     fetch("https://coin-flip1.p.rapidapi.com/headstails", {
@@ -43,36 +58,36 @@ async function execute(client, message, args, Discord, profileData) {
             response.json().then(async (json) => {
                 let generatedOutcome = json['outcome'].toLowerCase()
 
-                if (outcome == generatedOutcome) {
+                if (side.toLowerCase() == generatedOutcome) {
                     await profileModel.findOneAndUpdate({
-                        userID: message.author.id
+                        userID: interaction.user.id
                     }, {
                         $inc: {
-                            coins: amount
+                            coins: wager
                         }
                     })
 
                     let response = new MessageEmbed()
                         // title, desc, color, 
                         .setTitle(":white_check_mark: You guessed correctly")
-                        .setDescription(`Coins Earned: ${amount}`)
+                        .setDescription(`Coins Earned: ${wager}`)
                         .setColor(EmbedColors.Discord.GREEN)
-                    await message.channel.send({ embed: response, })
+                    await interaction.reply({ embeds: [response], })
                 }
                 else {
                     await profileModel.findOneAndUpdate({
-                        userID: message.author.id
+                        userID: interaction.user.id
                     }, {
                         $inc: {
-                            coins: -amount
+                            coins: -wager
                         }
                     })
                     let response = new MessageEmbed()
                         // title, desc, color, 
                         .setTitle(":x: You guessed wrong")
-                        .setDescription(`Coins Lost: ${amount}`)
+                        .setDescription(`Coins Lost: ${wager}`)
                         .setColor(EmbedColors.Default.RED)
-                    await message.channel.send({ embed: response, })
+                    await interaction.reply({ embeds: [response], })
                 }
 
             })
@@ -81,17 +96,38 @@ async function execute(client, message, args, Discord, profileData) {
             console.error(err);
         });
 
-
-
-
-
-
 }
 
 module.exports = {
     name: 'coinflip',
-    description: 'Wager on flipping a coin, goodluck :)',
-    aliases: ['coin', 'flip'],
-    args: true,
-    execute: execute,
+    description: 'Flip a coin!',
+    definition: {
+        name: 'coinflip',
+        description: 'Flip a coin!',
+        options: [
+            {
+                name: 'wager',
+                description: 'The wager you want to wager',
+                type: CommandTypes.INTEGER,
+                required: true
+            },
+            {
+                name: 'side',
+                description: 'Heads or tails',
+                type: CommandTypes.STRING,
+                required: true,
+                choices: [
+                    {
+                        name: 'Heads',
+                        value: 'HEADS'
+                    },
+                    {
+                        name: 'Tails',
+                        value: 'TAILS'
+                    }
+                ]
+            },
+        ]
+    },
+    execute
 };
