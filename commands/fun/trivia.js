@@ -1,18 +1,15 @@
-const { Message, MessageEmbed } = require('discord.js')
 const fetch = require('node-fetch')
 const triviaModel = require('../../models/triviaSchema')
+const CommandTypes = require('../../helpers/CommandTypes')
+const { CommandInteraction, Message, MessageEmbed, Client } = require('discord.js');
 const EmbedColors = require('../../helpers/EmbedColors')
 
-
-
 /**
- * 
- * @param {} client
- * @param {Message} message
- * @param {} args
- * @param {} Discord
- * */
-async function execute(client, message, args, Discord) {
+* Handle the command
+* @param {CommandInteraction} interaction
+*/
+const execute = async (interaction) => {
+
     let generatedQuestion = "yo"
     let generatedAnswer = ""
 
@@ -32,9 +29,7 @@ async function execute(client, message, args, Discord) {
                     .setTitle(":question: New Question")
                     .setDescription(`${generatedQuestion}`)
                     .setColor(EmbedColors.Default.BLUE)
-                // await message.channel.send({ embeds: [generatedQuestionEmbed] })
-                await message.channel.send({ embed: generatedQuestionEmbed, })
-                //message.channel.send(generatedAnswer)
+                await interaction.reply({ embeds: [generatedQuestionEmbed] })
                 let triviaData;
                 try {
                     triviaData = await triviaModel.findOne({ id: 1 })
@@ -66,13 +61,14 @@ async function execute(client, message, args, Discord) {
             console.error(err);
         });
 
-
-
 }
 
 module.exports = {
     name: 'trivia',
-    description: 'Trivia questions',
-    aliases: [],
-    execute: execute,
+    description: 'Get a trivia question',
+    definition: {
+        name: 'trivia',
+        description: 'Get a trivia question'
+    },
+    execute
 };

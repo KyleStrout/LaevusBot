@@ -1,21 +1,38 @@
 const profileModel = require('../../models/profileSchema')
-const { Message, MessageEmbed } = require('discord.js')
+const CommandTypes = require('../../helpers/CommandTypes')
+const { CommandInteraction, Message, MessageEmbed, Client } = require('discord.js');
 const EmbedColors = require('../../helpers/EmbedColors')
 
+/**
+* Handle the command
+* @param {CommandInteraction} interaction
+*/
+const execute = async (interaction) => {
+    let profileData = await profileModel.findOne({ userID: interaction.user.id })
 
-
-async function execute(client, message, args, Discord, profileData) {
-    const amount = args[0]
-    console.log(amount)
+    const amount = interaction.options.first().value
     if (amount % 1 != 0 || amount <= 0) {
-        return await message.reply('Withdrawal amount must be a whole number')
+        let failure = new MessageEmbed()
+            // title, desc, color, 
+            .setTitle(":x: Failure!")
+            .setDescription(`Withdrawal cant be a negative number`)
+            .setColor(EmbedColors.Discord.RED)
+        await interaction.reply({ embeds: [failure], ephemeral: true })
+        return
     }
     try {
         if (amount > profileData.bank) {
-            return await message.reply("You dont have that amount of coins to withdraw")
+            let failure = new MessageEmbed()
+                // title, desc, color, 
+                .setTitle(":x: Failure!")
+                .setDescription(`You dont have that amount of coins to withdraw`)
+                .setColor(EmbedColors.Discord.RED)
+            await interaction.reply({ embeds: [failure], ephemeral: true })
+            return
+
         }
         const response = await profileModel.findOneAndUpdate({
-            userID: message.author.id,
+            userID: interaction.user.id,
         }, {
             $inc: {
                 coins: amount,
@@ -24,18 +41,30 @@ async function execute(client, message, args, Discord, profileData) {
         })
         let withdraw = new MessageEmbed()
             // title, desc, color, 
-            .setTitle(":money_with_wings: Withdrawal")
-            .setDescription(`Amount: ${amount}`)
+            .setTitle(":bank: Succesful")
+            .setDescription(`**Withdrawn**: ${amount}`)
             .setColor(EmbedColors.Discord.GREEN)
-        await message.channel.send({ embed: withdraw, })
+            .addField('__**New Balance**__', `**Wallet**: ${profileData.coins + amount}\n**Bank**: ${profileData.bank - amount}`)
+        await interaction.reply({ embeds: [withdraw] })
     } catch (err) {
         console.log(err)
     }
+
 }
 
 module.exports = {
-    name: 'withdrawal',
-    description: 'Withdraw coins from your bank',
-    aliases: ['withdraw', 'wd'],
-    execute: execute,
-}
+    name: 'withdraw',
+    description: 'Withdraw coins from your bank into your wallet',
+    definition: {
+        name: 'withdraw',
+        description: 'Withdraw coins from your bank into your wallet',
+        options: [
+            {
+                name: 'amount',
+                description: 'The amount of money you want to withdraw',
+                type: CommandTypes.INTEGER,
+                required: true
+            }]
+    },
+    execute
+};

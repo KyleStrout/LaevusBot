@@ -1,28 +1,30 @@
-const { Message, MessageEmbed } = require('discord.js')
+const { CommandInteraction, Message, MessageEmbed, Client } = require('discord.js');
 const EmbedColors = require('../../helpers/EmbedColors')
+const profileModel = require('../../models/profileSchema')
 
 /**
- * @param {Message} message The user message
- * @param {Array} args The command arguments
- */
+* Handle the command
+* @param {CommandInteraction} interaction
+*/
+const execute = async (interaction) => {
+    let profileData = await profileModel.findOne({ userID: interaction.user.id })
 
-const { description } = require("../fun/ping")
-
-
-async function execute(client, message, args, Discord, profileData) {
     let balance = new MessageEmbed()
         // title, desc, color, 
         .setTitle(":moneybag: Balance")
-        .setDescription(`Wallet: ${profileData.coins}\nBank: ${profileData.bank}`)
+        .setDescription(`**Wallet**: ${profileData.coins}\n**Bank**: ${profileData.bank}`)
         .setColor(EmbedColors.Discord.GREEN)
     // await message.channel.send({ embeds: [generatedQuestionEmbed] })
-    await message.channel.send({ embed: balance, })
-    //await message.channel.send(`Wallet balance: ${profileData.coins}\nBank: ${profileData.bank}`)
+    await interaction.reply({ embeds: [balance] })
+
 }
 
 module.exports = {
     name: 'balance',
-    description: 'User wallet balance and bank balance',
-    aliases: ['bal', 'bank', 'wallet'],
-    execute: execute,
-}
+    description: 'View wallet and bank account balances',
+    definition: {
+        name: 'balance',
+        description: 'View wallet and bank account balances'
+    },
+    execute
+};

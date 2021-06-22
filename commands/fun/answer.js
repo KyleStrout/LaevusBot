@@ -1,10 +1,15 @@
 const triviaModel = require('../../models/triviaSchema')
 const profileModel = require('../../models/profileSchema')
-const { Message, MessageEmbed } = require('discord.js')
-const EmbedColors = require('../../helpers/EmbedColors')
+const { CommandInteraction, Message, MessageEmbed, Client } = require('discord.js');
+const EmbedColors = require('../../helpers/EmbedColors');
+const CommandTypes = require('../../helpers/CommandTypes');
 
-async function execute(client, message, args, Discord) {
-    userAnswer = args[0]
+/**
+* Handle the command
+* @param {CommandInteraction} interaction
+*/
+const execute = async (interaction) => {
+    const userAnswer = interaction.options.first().value
 
     userResponse = await triviaModel.findOne({ answer: userAnswer })
     if (userResponse) {
@@ -15,7 +20,7 @@ async function execute(client, message, args, Discord) {
                 .setTitle(":white_check_mark: Correct")
                 .setDescription(`Coins Earned: ${randomNumber}`)
                 .setColor(EmbedColors.Discord.GREEN)
-            await message.channel.send({ embed: response, })
+            await interaction.reply({ embeds: [response] })
             // update to answered
             await triviaModel.findOneAndUpdate({
                 id: 1
@@ -23,7 +28,7 @@ async function execute(client, message, args, Discord) {
                 state: "used"
             })
             await profileModel.findOneAndUpdate({
-                userID: message.author.id
+                userID: interaction.user.id
             }, {
                 $inc: {
                     coins: randomNumber
@@ -34,9 +39,9 @@ async function execute(client, message, args, Discord) {
             let response = new MessageEmbed()
                 // title, desc, color, 
                 .setTitle(":x: Incorrect")
-                .setDescription(`Someone already answered that, type !trivia for a new question`)
+                .setDescription(`Someone already answered that, type \`/trivia\` for a new question`)
                 .setColor(EmbedColors.Default.DARK_RED)
-            await message.channel.send({ embed: response, })
+            await interaction.reply({ embeds: [response] })
         }
 
     }
@@ -46,15 +51,26 @@ async function execute(client, message, args, Discord) {
             .setTitle(":x: Incorrect")
             .setDescription("Sorry that's not correct")
             .setColor(EmbedColors.Default.DARK_RED)
-        await message.channel.send({ embed: response, })
+        await interaction.reply({ embeds: [response] })
     }
+
 
 }
 
 module.exports = {
     name: 'answer',
-    description: 'Answer random trivia',
-    aliases: [],
-    args: true,
-    execute: execute,
+    description: 'Answer the most recent trivia question to earn coins',
+    definition: {
+        name: 'answer',
+        description: 'Answer the most recent trivia question to earn coins',
+        options: [
+            {
+                name: 'answer',
+                description: 'Your answer (must be a number)',
+                type: CommandTypes.INTEGER,
+                required: true
+            }
+        ]
+    },
+    execute
 };

@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "^12.5.3",
+    "discord.js": "^13.0.0-dev.807ea2d3c197c7c6556bd1c894114932f6657d49",
     "dotenv": "^10.0.0",
     "mongoose": "^5.12.14",
     "node-fetch": "^2.6.1"
