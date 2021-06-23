@@ -32,7 +32,7 @@ const execute = async (interaction) => {
                 .setTitle(":x: Error")
                 .setDescription(`You dont have that amount of coins in your wallet to wager.`)
                 .setColor(EmbedColors.Default.DARK_RED)
-            await interaction.reply({ embed: response, })
+            await interaction.reply({ embeds: [response] })
             return
         }
         if (userRandomNumber > botRandomNumber) {
