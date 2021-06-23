@@ -1,8 +1,6 @@
 const { GuildMember } = require('discord.js')
 const profileModel = require('../../models/profileSchema')
-const { CommandInteraction, Message, MessageEmbed, Client } = require('discord.js');
-const EmbedColors = require('../../helpers/EmbedColors');
-const CommandTypes = require('../../helpers/CommandTypes');
+
 
 /** 
  * Handle the roll command
@@ -22,7 +20,7 @@ module.exports = async (client, Discord, member) => {
     //     .setDescription(`**${member.user.username}** just joined!\nUse \`/\` to use the bot`)
     //     .setColor(EmbedColors.Discord.YELLOW)
     // await member.guild.channels.cache.get('839092761584074832').send({ embeds: [welcomeEmbed] })
-    await member.guild.channels.cache.get('839092761584074832').send(`Welcome **${member.user.username}!** \nType \`/help\` to use the bot!`)
+    await member.guild.channels.cache.get('839092761584074832').send(`Welcome **${member.user.username}!** \nType \`/help\` for commands!`)
 
     //383003302427754509
 
