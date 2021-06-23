@@ -10,13 +10,16 @@ const CommandTypes = require('../../helpers/CommandTypes');
  * @param {Array} args The command arguments
  */
 
+
+
 module.exports = async (client, Discord, member) => {
     //let welcomeRole = member.guild.roles.cache.find(role => role.name === 'Soldier')
     //await member.roles.add(welcomeRole)
     welcomeEmbed = new MessageEmbed()
-        .setTitle(':poggies: Welcome to Games & Sleep :poggies:')
-        .setDescription(`${member.user.username} just joined!\nUse \`/\` to use the bot`)
-    await member.guild.channels.cache.get('839092761584074832').send(welcomeEmbed)
+        .setTitle(':wave: Welcome to Games & Sleep!')
+        .setDescription(`**${member.username}** just joined!\nUse \`/\` to use the bot`)
+        .setColor(EmbedColors.Discord.YELLOW)
+    await member.guild.channels.cache.get('839092761584074832').send({ embeds: [welcomeEmbed] })
 
     //383003302427754509
 
