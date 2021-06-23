@@ -13,8 +13,8 @@ const CommandTypes = require('../../helpers/CommandTypes');
 
 
 module.exports = async (client, Discord, member) => {
-    //let welcomeRole = member.guild.roles.cache.find(role => role.name === 'Soldier')
-    //await member.roles.add(welcomeRole)
+    let welcomeRole = member.guild.roles.cache.find(role => role.name === 'Soldier')
+    await member.roles.add(welcomeRole)
 
     // embed doesn't work for some reason here?
     // welcomeEmbed = new MessageEmbed()
