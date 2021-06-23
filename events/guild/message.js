@@ -1,12 +1,16 @@
 const { prefix, token } = require('../../config.json');
 const profileModel = require('../../models/profileSchema')
+const { CommandInteraction, Message, MessageEmbed, Client } = require('discord.js');
+const CommandTypes = require('../../helpers/CommandTypes');
+const EmbedColors = require('../../helpers/EmbedColors');
 
 
 
 
 module.exports = async (client, Discord, message) => {
     if (!message.content.startsWith(prefix) || message.author.bot) {
-        // increment message counter
+
+        // increment message counter and coins for a user message
         try {
             await profileModel.findOneAndUpdate({
                 userID: message.author.id,
