@@ -15,6 +15,8 @@ const CommandTypes = require('../../helpers/CommandTypes');
 module.exports = async (client, Discord, member) => {
     //let welcomeRole = member.guild.roles.cache.find(role => role.name === 'Soldier')
     //await member.roles.add(welcomeRole)
+    console.log('yo')
+
     welcomeEmbed = new MessageEmbed()
         .setTitle(':wave: Welcome to Games & Sleep!')
         .setDescription(`**${member.username}** just joined!\nUse \`/\` to use the bot`)
