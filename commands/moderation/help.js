@@ -15,6 +15,7 @@ async function execute(interaction) {
             "\n > **Note**: you can also do `/` to autocomplete discord commands."
         )
         .setColor(EmbedColors.Discord.YELLOW)
+        .setFooter('This bot was created by Laevus and Queffy, GitHub: https://github.com/KyleStrout/LaevusBot')
 
     const commandFolders = fs.readdirSync('./commands');
     commandFolders.forEach(folder => {
