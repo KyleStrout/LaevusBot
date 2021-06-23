@@ -21,6 +21,7 @@ module.exports = async (client, Discord, member) => {
         .setDescription(`**${member.user.username}** just joined!\nUse \`/\` to use the bot`)
         .setColor(EmbedColors.Discord.YELLOW)
     await member.guild.channels.cache.get('839092761584074832').send({ embeds: [welcomeEmbed] })
+    await member.guild.channels.cache.get('839092761584074832').send(`Welcome **${member.user.username}!** \nType \`/help\` to use the bot!`)
 
     //383003302427754509
 
