@@ -17,7 +17,7 @@ module.exports = async (client, Discord, message) => {
             }, {
                 $inc: {
                     messageCount: 1,
-                    bank: 20,
+                    bank: 80,
                 }
             })
         } catch (err) {
