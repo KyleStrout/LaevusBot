@@ -14,7 +14,6 @@ Features:
 - Message counter
 - Quotes
 - Server info
-- Help/commands with DM from bot
-- Most bot replies are embeds
+- Help
 - Embeds
 
